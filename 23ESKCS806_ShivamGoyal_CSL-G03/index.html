@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rail Fence &amp; Columnar Transposition Visualizer</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <h1>Transposition Cipher Visualizer</h1>
+  <nav class="tabs" role="tablist" aria-label="Cipher">
+    <button role="tab" id="tab-rail" aria-selected="true" data-view="rail">Rail Fence</button>
+    <button role="tab" id="tab-col" aria-selected="false" data-view="col">Columnar</button>
+    <button role="tab" id="tab-ana" aria-selected="false" data-view="ana">Why it breaks</button>
+  </nav>
+</header>
+
+<!-- ============ Rail fence and columnar share one layout ============ -->
+<main id="cipher-view" class="layout">
+  <form id="controls" class="controls" autocomplete="off">
+    <fieldset class="mode">
+      <legend>Mode</legend>
+      <label><input type="radio" name="mode" value="encrypt" checked> Encrypt</label>
+      <label><input type="radio" name="mode" value="decrypt"> Decrypt</label>
+    </fieldset>
+
+    <label for="text" id="text-label">Plaintext</label>
+    <textarea id="text" rows="3" maxlength="400">WE ARE DISCOVERED, FLEE AT ONCE</textarea>
+
+    <div id="rail-key">
+      <label for="rails">Number of rails</label>
+      <input id="rails" type="number" min="2" max="12" value="3">
+    </div>
+    <div id="col-key" hidden>
+      <label for="keyword">Keyword</label>
+      <input id="keyword" type="text" value="ZEBRAS" maxlength="12">
+      <label for="pad">Padding character <span class="hint">(leave empty for none)</span></label>
+      <input id="pad" type="text" value="X" maxlength="1">
+    </div>
+
+    <label class="check"><input id="clean" type="checkbox" checked>
+      Remove spaces and punctuation, use capitals</label>
+
+    <button type="submit" class="primary">Show the steps</button>
+    <p id="error" class="error" role="alert"></p>
+  </form>
+
+  <section class="stage" aria-label="Animation">
+    <p id="narration" class="narration" aria-live="polite">Enter a message and press “Show the steps”.</p>
+    <div class="board-wrap"><div id="board" class="board"></div></div>
+
+    <div class="tape-row">
+      <span id="tape-label">Ciphertext</span>
+      <output id="tape" class="tape"></output>
+      <button type="button" id="copy" class="ghost">Copy</button>
+    </div>
+
+    <div class="player" role="group" aria-label="Playback">
+      <button type="button" id="btn-reset" title="Back to start (Home)">Start</button>
+      <button type="button" id="btn-back" title="One step back (Left arrow)">Back</button>
+      <button type="button" id="btn-play" class="primary" title="Play or pause (Space)">Play</button>
+      <button type="button" id="btn-next" title="One step forward (Right arrow)">Next</button>
+      <button type="button" id="btn-end" title="Jump to result (End)">Result</button>
+      <label class="speed">Speed <input id="speed" type="range" min="1" max="10" value="5"></label>
+      <span id="counter" class="counter">0 / 0</span>
+    </div>
+  </section>
+</main>
+
+<!-- ============ Cryptanalysis view ============ -->
+<main id="analysis-view" class="analysis" hidden>
+  <section class="ana-input">
+    <label for="ana-text">Secret message to attack</label>
+    <textarea id="ana-text" rows="2">THE SECRET MEETING WILL TAKE PLACE AT THE OLD LIBRARY NEAR THE RIVER ON FRIDAY EVENING</textarea>
+    <div class="row">
+      <label>Rails <input id="ana-rails" type="number" min="2" max="12" value="5"></label>
+      <label>Keyword <input id="ana-key" type="text" value="TIGER" maxlength="7"></label>
+      <label>Try keys up to <select id="ana-max">
+        <option>5</option><option selected>6</option><option>7</option></select> letters</label>
+      <button id="ana-run" class="primary" type="button">Encrypt and attack</button>
+    </div>
+    <p id="ana-error" class="error" role="alert"></p>
+  </section>
+
+  <section class="ana-card">
+    <h2>1. Letter counts do not change</h2>
+    <p id="freq-note" class="note"></p>
+    <div id="freq-chart" class="freq"></div>
+  </section>
+
+  <section class="ana-card">
+    <h2>2. Every rail fence key, tried</h2>
+    <p id="rail-note" class="note"></p>
+    <div class="table-wrap"><table id="rail-table"></table></div>
+  </section>
+
+  <section class="ana-card">
+    <h2>3. Every column order, tried</h2>
+    <p id="col-note" class="note"></p>
+    <div class="table-wrap"><table id="col-table"></table></div>
+  </section>
+</main>
+
+<script src="js/railfence.js"></script>
+<script src="js/columnar.js"></script>
+<script src="js/analysis.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
